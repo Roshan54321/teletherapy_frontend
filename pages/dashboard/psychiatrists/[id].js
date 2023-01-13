@@ -1,6 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import Header from "../../components/Header/header";
-import Footer from "../../components/Footer/footer"
 import 'react-loading-skeleton/dist/skeleton.css'
 import Head from 'next/head'
 import axios from "axios";
@@ -8,6 +6,7 @@ import useSWR, { mutate } from "swr";
 import Image from "next/legacy/image";
 import { useRouter } from 'next/router'
 import { HiOutlineMail } from 'react-icons/hi'
+import DashLayout from '../../../components/Dashboard/DashLayout';
 
 export default function Psychiatrist(props) {
     const router = useRouter()
@@ -30,12 +29,11 @@ export default function Psychiatrist(props) {
     }
 
     return (
-        <div className={`w-full h-screen bg-back pt-20 dark:bg-background text-white`}>
+        <div className={`w-full min-h-screen text-white`}>
             <Head>
                 <title>{`Psychiatrist | TeleCBT`}</title>
             </Head>
-            <Header page="programmes" />
-            <div className="mt-32 w-full min-h-full pb-20 px-10">
+            <div className="mt-32 w-full min-h-full pb-20 px-20 pr-32">
                 <div className="flex flex-col justify-center gap-5 pb-10 items-center">
                     <div className="flex flex-col w-full gap-10">
                         <div className="flex flex-col gap-1 md:flex-row md:gap-16 justify-center">
@@ -81,7 +79,10 @@ export default function Psychiatrist(props) {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div >
     );
 }
+
+Psychiatrist.getLayout = function getLayout(page) {
+    return <DashLayout active="breathing">{page}</DashLayout>;
+  };

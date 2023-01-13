@@ -2,6 +2,14 @@ import DashLayout from '../../components/Dashboard/DashLayout';
 import { MdVideocam } from 'react-icons/md';
 import { AiFillPlayCircle } from 'react-icons/ai';
 import { GoSettings } from 'react-icons/go';
+import Link from 'next/link';
+import Image from 'next/image';
+import Head from 'next/head';
+import useSWR, { mutate } from 'swr'
+import { getProfile } from '../../api/Profile';
+import axios from 'axios'
+import { useEffect } from 'react';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +22,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { useState } from 'react';
 
 ChartJS.register(
   CategoryScale,
@@ -76,6 +85,7 @@ const labels = [
     data: 10,
   },
 ];
+
 export const data = {
   labels: labels.map((item) => item.day),
   datasets: [
@@ -90,10 +100,40 @@ export const data = {
     },
   ],
 };
-import Image from 'next/image';
-const home = () => {
+
+
+
+const Home = () => {
+  const [moodData, setMoodData] = useState(null)
+  //getting profile
+  const { data: profileData, error: profileError } = useSWR(
+    process.env.BACKEND + "/user/profile",
+    async (url) => await getProfile(url), { revalidateOnFocus: false, revalidateOnReconnect: true }
+  );
+
+  const { data: mood, error } = useSWR(process.env.BACKEND + "/user/get-emoji", async (url) => await axios.get(url, { withCredentials: true }))
+
+  const submitFeeling = (emojiValue) => {
+    try {
+      const res = axios.post(process.env.BACKEND + "/user/update-emoji", { value: emojiValue }, { withCredentials: true })
+      setMoodData(emojiValue)
+    } catch (e) {
+      setErrorMessage(e.response?.data?.message)
+    }
+  }
+
+  useEffect(() => {
+    if (typeof mood !== "undefined") {
+      setMoodData(mood?.data?.data?.value)
+    }
+  }, [mood])
+
+
   return (
     <div className="bg-backgroundColor rounded-3xl h-fit overflow-hidden ">
+      <Head>
+        <title>Dashboard | TeleCBT</title>
+      </Head>
       <div className="p-8  h-[140px] flex justify-between items-center relative">
         {/* <div className="absolute inset-0 opacity-70">
           <Image
@@ -105,7 +145,7 @@ const home = () => {
         </div> */}
 
         <h1 className="font-[800] text-[35px] text-black relative overflow-hidden pb-5">
-          <span className="">Good morning , Sachin</span>
+          <span className="">Good morning , {profileData?.data?.firstName + " " + profileData?.data?.lastName}</span>
         </h1>
       </div>
       <div className="rounded-t-3xl bg-[#f5f4f3] grid grid-cols-3 gap-3 -mt-8 overflow-hidden relative ">
@@ -142,12 +182,12 @@ const home = () => {
               </div>
             </div>
           </div>
-          <div className="   flex flex-col col-span-2 mt-8 ">
+          <div className="flex flex-col col-span-2 mt-8 ">
             <span className="font-[700] text-[18px] ">
               How do you feel today?
             </span>
             <div className=" flex flex-wrap gap-4 rounded-3xl  bg-black p-4">
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 0 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(0)}>
                 <Image
                   src="/images/sad.png "
                   className="object-contain"
@@ -157,7 +197,7 @@ const home = () => {
                 />
               </div>
 
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 1 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(1)}>
                 <Image
                   src="/images/crying.png "
                   className="object-contain"
@@ -166,7 +206,7 @@ const home = () => {
                   alt=""
                 />
               </div>
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 2 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(2)}>
                 <Image
                   src="/images/angry.png "
                   className="object-contain"
@@ -175,7 +215,7 @@ const home = () => {
                   alt=""
                 />
               </div>
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 3 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(3)}>
                 <Image
                   src="/images/anxious.png "
                   className="object-contain"
@@ -184,7 +224,7 @@ const home = () => {
                   alt=""
                 />
               </div>
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 4 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(4)}>
                 <Image
                   src="/images/smiling.png "
                   className="object-contain"
@@ -194,7 +234,7 @@ const home = () => {
                 />
               </div>
 
-              <div className="bg-backgroundColor/50 ring-2 ring-white/60  p-1 rounded-full w-10 h-10">
+              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 5 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(5)}>
                 <Image
                   src="/images/laughing.png "
                   className="object-contain"
@@ -266,65 +306,77 @@ const home = () => {
             <div className="font-[700] text-[18px] ">Explore tools</div>
 
             <div className="flex h-[200px] gap-4 mt-3">
-              <div className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
-                <Image
-                  className="absolute object-cover opacity-60  w-[500px] h-[500px] "
-                  src="/images/tools/meditation.jpg"
-                  fill
-                  alt=""
-                />
-                <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
-                  <span>Meditation</span>
-                </div>
-              </div>
+              <Link href="meditation" legacyBehavior>
+                <a className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
+                  <Image
+                    className="absolute object-cover opacity-60  w-[500px] h-[500px] "
+                    src="/images/tools/meditation.jpg"
+                    fill
+                    alt=""
+                  />
+                  <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
+                    <span>Meditation</span>
+                  </div>
+                </a>
+              </Link>
 
-              <div className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
-                <Image
-                  className="absolute object-cover opacity-60  w-[500px] h-[500px] "
-                  src="/images/tools/journal.jpg"
-                  fill
-                  alt=""
-                />
-                <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
-                  <span>Journal Writing</span>
-                </div>
-              </div>
+              <Link href="journal" legacyBehavior>
+                <a className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
+                  <Image
+                    className="absolute object-cover opacity-60  w-[500px] h-[500px] "
+                    src="/images/tools/journal.jpg"
+                    fill
+                    alt=""
+                  />
+                  <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
+                    <span>Journal Writing</span>
+                  </div>
+                </a>
+              </Link>
 
-              <div className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
-                <Image
-                  className="absolute object-cover opacity-60  w-[500px] h-[500px] "
-                  src="/images/tools/breathing.jpg"
-                  fill
-                  alt=""
-                />
-                <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
-                  <span>Breathing Practise</span>
-                </div>
-              </div>
+              <Link href="breathing" legacyBehavior>
+                <a className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
+                  <Image
+                    className="absolute object-cover opacity-60  w-[500px] h-[500px] "
+                    src="/images/tools/breathing.jpg"
+                    fill
+                    alt=""
+                  />
+                  <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
+                    <span>Breathing Practise</span>
+                  </div>
+                </a>
+              </Link>
 
-              <div className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
-                <Image
-                  className="absolute object-cover opacity-60  w-[500px] h-[500px] "
-                  src="/images/tools/pomodoro.jpg"
-                  fill
-                  alt=""
-                />
-                <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
-                  <span>Pomodoro</span>
-                </div>
-              </div>
+              <Link href="pomodoro" legacyBehavior>
+                <a className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
+                  <Image
+                    className="absolute object-cover opacity-60  w-[500px] h-[500px] "
+                    src="/images/tools/pomodoro.jpg"
+                    fill
+                    alt=""
+                  />
+                  <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
+                    <span>Pomodoro</span>
+                  </div>
+                </a>
+              </Link>
 
-              <div className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
-                <Image
-                  className="absolute object-cover opacity-60   w-[500px] h-[500px] "
-                  src="/images/tools/pomodoro.jpg"
-                  fill
-                  alt=""
-                />
-                <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
-                  <span>Pomodoro</span>
-                </div>
-              </div>
+              <Link href="routine" legacyBehavior>
+                <a className="relative w-1/5 rounded-2xl bg-black overflow-hidden">
+                  <Image
+                    className="absolute object-cover opacity-60   w-[500px] h-[500px] "
+                    src="/images/tools/routine.jpg"
+                    fill
+                    alt=""
+                  />
+                  <div className="font-[600] text-[18px] flex gap-3 absolute left-4 bottom-4 text-white items-center">
+                    <span>Routine</span>
+                  </div>
+                </a>
+              </Link>
+
+
             </div>
           </div>
         </div>
@@ -339,7 +391,8 @@ const home = () => {
   );
 };
 
-export default home;
-home.getLayout = function getLayout(page) {
+export default Home;
+
+Home.getLayout = function getLayout(page) {
   return <DashLayout active="home">{page}</DashLayout>;
 };

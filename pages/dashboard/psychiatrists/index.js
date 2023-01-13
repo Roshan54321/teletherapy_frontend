@@ -1,6 +1,4 @@
 import React from "react";
-import Header from "../../components/Header/header";
-import Footer from "../../components/Footer/footer";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import Head from 'next/head'
@@ -9,6 +7,7 @@ import axios from "axios";
 import Link from "next/link";
 import useSWR from "swr";
 import Image from "next/legacy/image";
+import DashLayout from '../../../components/Dashboard/DashLayout';
 
 export default function Psychiatrists(props) {
   const router = useRouter()
@@ -22,12 +21,11 @@ export default function Psychiatrists(props) {
   }
 
   return (
-    <div className={`w-full h-screen bg-back pt-20 dark:bg-background`}>
+    <div className={`w-full h-screen bg-back dark:bg-background`}>
       <Head>
         <title>{`Psychiatrists | TeleCBT`}</title>
       </Head>
-      <Header page="programmes" />
-      <div className="dark:bg-background bg-back flex w-full min-h-full pb-20 px-10 justify-center items-center">
+      <div className="dark:bg-background bg-back flex w-full min-h-full pb-20 px-20 pr-32 justify-center items-center">
         <div className="flex flex-wrap justify-center gap-10 py-20">
           {!data && !error ?
             <>
@@ -41,7 +39,7 @@ export default function Psychiatrists(props) {
             <>
               {psychiatrists ?
                 psychiatrists?.map((psychiatrist, i) =>
-                  <Link href={`/psychiatrists/${psychiatrist?._id}`} legacyBehavior>
+                  <Link href={`/dashboard/psychiatrists/${psychiatrist?._id}`} legacyBehavior>
                     <a className={`max-w-sm lg:max-w-full flex cursor-pointer hover:translate-y-1 justify-center`}>
                       {psychiatrist?.profilePicture ?
                         <div className="ring-1 ring-opacity-5 ring-blue-900 h-full w-[160px] relative">
@@ -73,7 +71,10 @@ export default function Psychiatrists(props) {
           }
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
+
+Psychiatrists.getLayout = function getLayout(page) {
+  return <DashLayout active="breathing">{page}</DashLayout>;
+};

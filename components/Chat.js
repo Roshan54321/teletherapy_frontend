@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Layout from './Layout/Layout';
 const socketIo = require('socket.io-client')
 const socket = socketIo.connect('http://localhost:5000');
 
@@ -88,37 +87,35 @@ export default function Chat() {
     }, [router])
 
     return (
-        <Layout>
-            <div className='mt-20 relative'>
-                {schedule ?
-                    <div className='absolute top-0 bottom-0 w-[440px] rounded-lg m-auto left-0 right-0 h-[170px] p-5 bg-yellow-500'>
-                        <div className='flex flex-col text-sm gap-1'>
-                            <div>Meeting Topic: {zoomData?.topic}</div>
-                            <div>Meeting Url:&nbsp;<span className='text-blue-600'>{zoomData?.join_url}</span></div>
-                            <div>Password: {zoomData?.password}</div>
-                        </div>
-                        <div className='flex justify-between'>
-                            <button onClick={() => setSchedule(false)} className='my-4 text-sm float-right bg-blue-300 p-1 rounded-md'>Cancel</button>
-                            <button onClick={sendMeeting} className='my-4 text-sm float-right bg-blue-300 p-1 rounded-md'>Send</button>
-                        </div>
+        <div className='mt-20 relative'>
+            {schedule ?
+                <div className='absolute top-0 bottom-0 w-[440px] rounded-lg m-auto left-0 right-0 h-[170px] p-5 bg-yellow-500'>
+                    <div className='flex flex-col text-sm gap-1'>
+                        <div>Meeting Topic: {zoomData?.topic}</div>
+                        <div>Meeting Url:&nbsp;<span className='text-blue-600'>{zoomData?.join_url}</span></div>
+                        <div>Password: {zoomData?.password}</div>
                     </div>
-                    :
-                    <></>
-                }
-                <div className='container'>
-                    <div className='pt-16 bg-blue-900'>
-                        <div className='text-white cursor-pointer hover:text-blue-100 hover:underline' onClick={scheduleMeeting}>Schedule Meeting</div>
-                    </div>
-                    <div className='messagearea'>
+                    <div className='flex justify-between'>
+                        <button onClick={() => setSchedule(false)} className='my-4 text-sm float-right bg-blue-300 p-1 rounded-md'>Cancel</button>
+                        <button onClick={sendMeeting} className='my-4 text-sm float-right bg-blue-300 p-1 rounded-md'>Send</button>
                     </div>
                 </div>
-                <div className='send'>
-                    <form ref={send_container} className='flex w-[900px] m-auto'>
-                        <input id='send__container__message' type="text" name="message" className='bg-blue-200 w-full rounded-bl-md' />
-                        <button className="bg-gray-200 rounded-br-md p-1" type='submit'>Enter</button>
-                    </form>
+                :
+                <></>
+            }
+            <div className='container'>
+                <div className='pt-16 bg-blue-900'>
+                    <div className='text-white cursor-pointer hover:text-blue-100 hover:underline' onClick={scheduleMeeting}>Schedule Meeting</div>
+                </div>
+                <div className='messagearea'>
                 </div>
             </div>
-        </Layout>
+            <div className='send'>
+                <form ref={send_container} className='flex w-[900px] m-auto'>
+                    <input id='send__container__message' type="text" name="message" className='bg-blue-200 w-full rounded-bl-md' />
+                    <button className="bg-gray-200 rounded-br-md p-1" type='submit'>Enter</button>
+                </form>
+            </div>
+        </div>
     )
 }

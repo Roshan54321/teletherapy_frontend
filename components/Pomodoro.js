@@ -105,24 +105,22 @@ export default function Pomodoro() {
     }, [])
 
     return (
-        <div className='flex justify-center items-center h-screen'>
-            <div id="pomodoro-app">
-                <div id="pomodoroContainer">
-                    <div id="timer">
-                        <div id="time">
-                            <span id="minutes">25</span>
-                            <span id="colon">:</span>
-                            <span id="seconds">00</span>
-                        </div>
-                        <div id="filler"></div>
+        <div className='flex justify-center mt-[200px]'>
+            <div id="pomodoroContainer">
+                <div id="timer">
+                    <div id="time">
+                        <span id="minutes">25</span>
+                        <span id="colon">:</span>
+                        <span id="seconds">00</span>
                     </div>
+                    <div id="filler"></div>
+                </div>
 
-                    <div id="buttons">
-                        <button id="work">Work</button>
-                        <button id="shortBreak">Short Break</button>
-                        <button id="longBreak">Long Break</button>
-                        <button id="stop">Stop</button>
-                    </div>
+                <div id="buttons">
+                    <button id="work">Work</button>
+                    <button id="shortBreak">Short Break</button>
+                    <button id="longBreak">Long Break</button>
+                    <button id="stop">Stop</button>
                 </div>
             </div>
         </div>

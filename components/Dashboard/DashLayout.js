@@ -7,17 +7,22 @@ import { Menu, Transition } from '@headlessui/react';
 import { HiOutlineMenuAlt1 } from 'react-icons/hi';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { GrClose } from 'react-icons/gr';
-import { ImSun } from 'react-icons/im';
 import { useTheme } from 'next-themes';
 import { FaRegBell } from 'react-icons/fa';
-import { RiLockPasswordLine } from 'react-icons/ri'; // as password change
-import { BsBriefcase } from 'react-icons/bs'; //as applied jobs
-import { AiOutlineProfile, AiOutlineLogout } from 'react-icons/ai'; //as dashboard and profile and logout
+import { BiTimeFive } from 'react-icons/bi'
+import { ImCheckboxUnchecked } from 'react-icons/im'
+import { GiMeditation } from 'react-icons/gi'
+import { MdEventAvailable } from 'react-icons/md'
+import { AiOutlineLogout } from 'react-icons/ai'; //as dashboard and profile and logout
+import { BsJournalCheck } from 'react-icons/bs'
 import { AiOutlineIdcard, AiOutlineHeart } from 'react-icons/ai'; //as resume and favourite jobs
 import { MdOutlineSpaceDashboard } from 'react-icons/md'; //as applied jobs and dashboard
 import { AiOutlineDelete } from 'react-icons/ai'; //as delete profile
 
 import { FiArrowRightCircle } from 'react-icons/fi';
+import { logoutUser } from '../../api/User';
+import { getProfile } from '../../api/Profile';
+import useSWR from 'swr'
 
 const DashLayout = ({ children, active }) => {
   const [mounted, SetMounted] = useState(false);
@@ -25,6 +30,14 @@ const DashLayout = ({ children, active }) => {
   const [lock, setlock] = useState(false);
   const [isshow, setisshow] = useState(false);
   const { theme, setTheme } = useTheme('light');
+
+  //getting profile
+  const { data } = useSWR(
+    process.env.BACKEND + "/user/profile",
+    async (url) => await getProfile(url), { revalidateOnFocus: false, revalidateOnReconnect: true }
+  );
+
+
   const escFunction = useCallback((event) => {
     if (event.keyCode === 27) {
       setisshow(false);
@@ -33,7 +46,7 @@ const DashLayout = ({ children, active }) => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    await api.post('/api/user/logout').catch((ee) => console.log(ee));
+    await logoutUser(process.env.BACKEND + "/user/logout/");
     router.reload();
   };
 
@@ -128,11 +141,10 @@ const DashLayout = ({ children, active }) => {
             </div>
           )}
           <div
-            className={`${
-              isshow
-                ? 'hidden xl:flex xl:justify-center xl:items-center dark:text-white text-gray-800  rounded-full ring-2 ring-gray-800 dark:ring-white p-1 cursor-pointer'
-                : 'hidden'
-            }`}
+            className={`${isshow
+              ? 'hidden xl:flex xl:justify-center xl:items-center dark:text-white text-gray-800  rounded-full ring-2 ring-gray-800 dark:ring-white p-1 cursor-pointer'
+              : 'hidden'
+              }`}
             onClick={() => setlock(!lock)}
           >
             <HiOutlineMenuAlt1 className="w-6 h-6 " />
@@ -144,12 +156,11 @@ const DashLayout = ({ children, active }) => {
               <Link key={item.id} href={item.links}>
                 <div
                   key={item.id}
-                  className={`py-2 px-3 flex gap-4 items-center cursor-pointer overflow-hidden  ${
-                    active === item.id ? 'bg-backgroundColor ' : ''
-                  } rounded-r-3xl hover:bg-white group `}
+                  className={`py-2 px-3 flex gap-4 items-center cursor-pointer overflow-hidden  ${active === item.id ? 'bg-backgroundColor ' : ''
+                    } rounded-r-3xl hover:bg-white group `}
                 >
                   <div className="">{item.icon}</div>
-                  <div className="overflow-hidden whitespace-nowrap text-[15px] font-extrabold tracking-wider  group-hover:text-black  ">
+                  <div className="overflow-hidden whitespace-nowrap text-[15px] font-extrabold tracking-wider  group-hover:text-black text-blue-300  ">
                     {item?.title}
                   </div>
                 </div>
@@ -160,9 +171,8 @@ const DashLayout = ({ children, active }) => {
         </div>
       </div>
       <div
-        className={`  ${
-          isshow && lock ? 'p-0 ' : 'pl-0 '
-        } flex flex-col w-full `}
+        className={`  ${isshow && lock ? 'p-0 ' : 'pl-0 '
+          } flex flex-col w-full `}
       >
         {/*  
     navbar conatiner
@@ -192,9 +202,8 @@ const DashLayout = ({ children, active }) => {
             </div>
 
             <div
-              className={`${
-                true ? 'flex hover:cursor-pointer z-[10]' : 'hidden'
-              }`}
+              className={`${true ? 'flex hover:cursor-pointer z-[10]' : 'hidden'
+                }`}
             >
               <Menu
                 as="div"
@@ -203,7 +212,7 @@ const DashLayout = ({ children, active }) => {
                 <div>
                   <Menu.Button className="inline-flex w-full justify-center items-center  ">
                     <Avatar
-                      name="sachin"
+                      name={data?.data?.firstName + " " + data?.data?.lastName}
                       size="31px"
                       textSizeRatio={3}
                       className="rounded-full "
@@ -222,13 +231,13 @@ const DashLayout = ({ children, active }) => {
                   <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y  overflow-hidden  rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none ">
                     <div className="flex flex-col items-center py-2 gap-1 bg-black   border-backgroundColor border-2 rounded-t-xl">
                       <Avatar
-                        name={'sachin'}
+                        name={data?.data?.firstName + " " + data?.data?.lastName}
                         size="40px"
                         textSizeRatio={3}
                         className="rounded-full"
                       ></Avatar>
                       <div className="capitalize font-semibold text-gray-800 dark:text-gray-300">
-                        sachin
+                        {data?.data?.firstName + " " + data?.data?.lastName}
                       </div>
                     </div>
 
@@ -236,34 +245,12 @@ const DashLayout = ({ children, active }) => {
                       <Menu.Item>
                         {({ active }) => (
                           <div
-                            className={`${
-                              active
-                                ? 'bg-backgrtou text-white'
-                                : ' text-gray-800'
-                            }  flex w-full items-center group-hover:bg-indigo-800 hover:cursor-pointer hover:bg-indigo-300   rounded-md px-2 py-2 text-sm`}
+                            className={`${active
+                              ? 'bg-backgrtou text-white'
+                              : ' text-gray-800'
+                              }  flex w-full items-center group-hover:bg-indigo-800 hover:cursor-pointer hover:bg-indigo-300   rounded-md px-2 py-2 text-sm`}
                           >
                             <Link href="/dashboard/home">Home</Link>
-                          </div>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <div
-                            className={`${
-                              active
-                                ? 'bg-indigo-600 text-white'
-                                : ' text-gray-800'
-                            }  flex w-full items-center group-hover:bg-indigo-800  hover:bg-indigo-300   rounded-md px-2 py-2 text-sm`}
-                          >
-                            <div
-                            // className={`${
-                            //   data?.data?.usertype === 'employer'
-                            //     ? 'hidden'
-                            //     : ''
-                            // } `}
-                            >
-                              <Link href={`/profile`}>My Profile</Link>
-                            </div>
                           </div>
                         )}
                       </Menu.Item>
@@ -272,11 +259,10 @@ const DashLayout = ({ children, active }) => {
                         {({ active }) => (
                           <div
                             onClick={handleLogout}
-                            className={`${
-                              active
-                                ? 'bg-indigo-600 text-white'
-                                : ' text-gray-800'
-                            }  flex w-full items-center group-hover:bg-indigo-800 hover:cursor-pointer hover:bg-indigo-300   rounded-md px-2 py-2 text-sm`}
+                            className={`${active
+                              ? 'bg-indigo-600 text-white'
+                              : ' text-gray-800'
+                              }  flex w-full items-center group-hover:bg-indigo-800 hover:cursor-pointer hover:bg-indigo-300   rounded-md px-2 py-2 text-sm`}
                           >
                             Logout
                           </div>
@@ -304,14 +290,12 @@ child container */}
           `}
             >
               <GiHamburgerMenu
-                className={` ${
-                  isshow ? 'hidden' : 'w-6 h-6 filter backdrop:blur-2xl'
-                }  `}
+                className={` ${isshow ? 'hidden' : 'w-6 h-6 filter backdrop:blur-2xl'
+                  }  `}
               />
               <GrClose
-                className={` ${
-                  isshow ? 'w-6 h-6 filter backdrop:blur-2xl ' : 'hidden'
-                }  `}
+                className={` ${isshow ? 'w-6 h-6 filter backdrop:blur-2xl ' : 'hidden'
+                  }  `}
               />
             </div>
           </div>
@@ -322,6 +306,7 @@ child container */}
 };
 
 export default DashLayout;
+
 const dashboard = [
   {
     id: 'home',
@@ -330,23 +315,35 @@ const dashboard = [
     icon: <MdOutlineSpaceDashboard className="w-6 h-6 text-gray-600" />,
   },
   {
-    id: 'profile',
-    title: 'My Profile',
-    links: '/dashboard/profile',
-    icon: <AiOutlineProfile className="w-6 h-6 text-gray-600 " />,
+    id: 'journal',
+    title: 'Journal',
+    links: '/dashboard/journal',
+    icon: <BsJournalCheck className="w-6 h-6 text-gray-600 " />,
   },
 
   {
-    id: 'notification',
-    title: 'Notifications',
-    links: '/dashboard/notification',
-    icon: <FaRegBell className="w-6 h-6 text-gray-600 " />,
+    id: 'pomodoro',
+    title: 'Pomodoro',
+    links: '/dashboard/pomodoro',
+    icon: <BiTimeFive className="w-6 h-6 text-gray-600 " />,
   },
   {
-    id: 'changepassword',
-    title: 'Change Password',
-    links: '/dashboard/changepassword',
-    icon: <RiLockPasswordLine className="w-6 h-6 text-gray-600" />,
+    id: 'breathing',
+    title: 'Breathing',
+    links: '/dashboard/breathing',
+    icon: <ImCheckboxUnchecked className="w-6 h-6 text-gray-600" />,
+  },
+  {
+    id: 'routine',
+    title: 'Routine',
+    links: '/dashboard/routine',
+    icon: <MdEventAvailable className="w-6 h-6 text-gray-600" />,
+  },
+  {
+    id: 'meditation',
+    title: 'Meditation',
+    links: '/dashboard/meditation',
+    icon: <GiMeditation className="w-6 h-6 text-gray-600" />,
   },
   {
     id: 'logout',

@@ -6,8 +6,16 @@ import Process from '../components/Process/process';
 import Services from '../components/Services';
 import ServiceExplain from '../components/Services/expain';
 import Trust from '../components/Trust/trust';
+import TawkTo from 'tawkto-react'
+import { useEffect } from 'react';
 
 export default function Home() {
+  useEffect(() => {
+    var tawk = new TawkTo("63c1756647425128790d4685", "1gmlr56ne")
+
+    tawk.hideWidget()
+  }, [])
+
   return (
     <Layout>
       <Head>
