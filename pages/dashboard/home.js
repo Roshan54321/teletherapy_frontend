@@ -5,11 +5,14 @@ import { GoSettings } from 'react-icons/go';
 import Link from 'next/link';
 import Image from 'next/image';
 import Head from 'next/head';
-import useSWR, { mutate } from 'swr'
+import useSWR, { mutate } from 'swr';
 import { getProfile } from '../../api/Profile';
-import axios from 'axios'
+import axios from 'axios';
 import { useEffect } from 'react';
 import { AiOutlineMessage, AiOutlinePlus } from 'react-icons/ai';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState } from 'react';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,7 +25,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { useState } from 'react';
 
 ChartJS.register(
   CategoryScale,
@@ -101,33 +103,49 @@ export const data = {
   ],
 };
 
-
-
 const Home = () => {
-  const [moodData, setMoodData] = useState(null)
+  const [moodData, setMoodData] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(true);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
   //getting profile
   const { data: profileData, error: profileError } = useSWR(
-    process.env.BACKEND + "/user/profile",
-    async (url) => await getProfile(url), { revalidateOnFocus: false, revalidateOnReconnect: true }
+    process.env.BACKEND + '/user/profile',
+    async (url) => await getProfile(url),
+    { revalidateOnFocus: false, revalidateOnReconnect: true }
   );
 
-  const { data: mood, error } = useSWR(process.env.BACKEND + "/user/get-emoji", async (url) => await axios.get(url, { withCredentials: true }))
+  const { data: mood, error } = useSWR(
+    process.env.BACKEND + '/user/get-emoji',
+    async (url) => await axios.get(url, { withCredentials: true })
+  );
 
   const submitFeeling = (emojiValue) => {
     try {
-      const res = axios.post(process.env.BACKEND + "/user/update-emoji", { value: emojiValue }, { withCredentials: true })
-      setMoodData(emojiValue)
+      const res = axios.post(
+        process.env.BACKEND + '/user/update-emoji',
+        { value: emojiValue },
+        { withCredentials: true }
+      );
+      setMoodData(emojiValue);
     } catch (e) {
-      setErrorMessage(e.response?.data?.message)
+      setErrorMessage(e.response?.data?.message);
     }
-  }
+  };
 
   useEffect(() => {
-    if (typeof mood !== "undefined") {
-      setMoodData(mood?.data?.data?.value)
+    if (typeof mood !== 'undefined') {
+      setMoodData(mood?.data?.data?.value);
     }
-  }, [mood])
-
+  }, [mood]);
 
   return (
     <div className="bg-backgroundColor rounded-3xl h-fit overflow-hidden ">
@@ -135,17 +153,11 @@ const Home = () => {
         <title>Dashboard | TeleCBT</title>
       </Head>
       <div className="p-8  h-[140px] flex justify-between items-center relative">
-        {/* <div className="absolute inset-0 opacity-70">
-          <Image
-            className=" object-cover"
-            src={'/images/background.jpg'}
-            alt=""
-            fill
-          />
-        </div> */}
-
         <h1 className="font-[800] text-[35px] text-black relative overflow-hidden pb-5">
-          <span className="">Good morning , {profileData?.data?.firstName + " " + profileData?.data?.lastName}</span>
+          <span className="">
+            Good morning ,{' '}
+            {profileData?.data?.firstName + ' ' + profileData?.data?.lastName}
+          </span>
         </h1>
       </div>
       <div className="rounded-t-3xl bg-[#f5f4f3] grid grid-cols-3 gap-3 -mt-8 overflow-hidden relative ">
@@ -189,7 +201,12 @@ const Home = () => {
               How do you feel today?
             </span>
             <div className=" flex flex-wrap gap-4 rounded-3xl  bg-black p-4">
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 0 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(0)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 0 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(0)}
+              >
                 <Image
                   src="/images/sad.png "
                   className="object-contain"
@@ -199,7 +216,12 @@ const Home = () => {
                 />
               </div>
 
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 1 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(1)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 1 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(1)}
+              >
                 <Image
                   src="/images/crying.png "
                   className="object-contain"
@@ -208,7 +230,12 @@ const Home = () => {
                   alt=""
                 />
               </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 2 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(2)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 2 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(2)}
+              >
                 <Image
                   src="/images/angry.png "
                   className="object-contain"
@@ -217,7 +244,12 @@ const Home = () => {
                   alt=""
                 />
               </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 3 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(3)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 3 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(3)}
+              >
                 <Image
                   src="/images/anxious.png "
                   className="object-contain"
@@ -226,7 +258,12 @@ const Home = () => {
                   alt=""
                 />
               </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 4 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(4)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 4 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(4)}
+              >
                 <Image
                   src="/images/smiling.png "
                   className="object-contain"
@@ -236,7 +273,12 @@ const Home = () => {
                 />
               </div>
 
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 5 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(5)}>
+              <div
+                className={`bg-backgroundColor/50 cursor-pointer ring-2 ${
+                  moodData === 5 ? 'ring-white scale-110' : 'ring-white/60'
+                } p-1 rounded-full w-10 h-10`}
+                onClick={() => submitFeeling(5)}
+              >
                 <Image
                   src="/images/laughing.png "
                   className="object-contain"
@@ -253,33 +295,6 @@ const Home = () => {
             <div className="font-[700] text-[20px] inline-flex">
               Assigned Psyciatrists
             </div>
-            {/* <div className="flex items-center gap-4">
-              <span className="border-black border-[3px] rounded-full group cursor-pointer relative overflow-hidden ">
-                <img
-                  className="rounded-full object-cover w-[120px] h-[120px] m-1"
-                  src={'/images/scene1.jpg'}
-                  fill
-                />
-                <div className="absolute group-hover:flex hidden inset-0 justify-center items-center bg-black/40">
-                  <AiOutlineMessage className="text-white w-16 h-16 " />
-                </div>
-              </span>
-
-              <span className="border-black border-[3px] rounded-full group cursor-pointer relative overflow-hidden ">
-                <img
-                  className="rounded-full object-cover w-[120px] h-[120px] m-1"
-                  src={'/images/scene2.jpg'}
-                  fill
-                />
-                <div className="absolute group-hover:flex hidden inset-0 justify-center items-center bg-black/40">
-                  <AiOutlineMessage className="text-white w-16 h-16 " />
-                </div>
-              </span>
-
-              <span className="group border-black border-[3px] rounded-full w-[60px] h-[60px] group cursor-pointer relative overflow-hidden flex items-center justify-center ">
-                <AiOutlinePlus className="w-12 h-12 group-hover:text-black/60 " />
-              </span>
-            </div> */}
 
             <div className="flex  items-center gap-5 ">
               <div className="flex  w-2/6 p-5 items-center justify-center  rounded-2xl bg-black gap-4">
@@ -395,8 +410,6 @@ const Home = () => {
                   </div>
                 </a>
               </Link>
-
-
             </div>
           </div>
 
@@ -531,6 +544,101 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-semibold leading-6 text-gray-900 text-center"
+                  >
+                    Your health score is {8}
+                  </Dialog.Title>
+                  <div className="mt-2 text-center">
+                    <p className="text-sm text-gray-500">
+                      People with this score may experience{' '}
+                      {
+                        'low mood , moderate signs of worry or social discomfort.'
+                      }
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      We recommend you to speak with our Psyciatrists to
+                      understand what you're going through, a little better!
+                    </p>
+
+                    <div className="border-black/5 border-t-2 mt-3 pt-3 flex flex-col gap-1 items-center">
+                      <div className="font-[700] text-[18px]">
+                        Recommendation
+                      </div>
+                      <p className="text-[16px] font-[600]">
+                        Talk to our Psyciatrists
+                      </p>
+                      <div className="flex  w-[250px] p-5 items-center justify-center  rounded-2xl bg-black gap-4">
+                        <img
+                          className="rounded-full object-cover w-[60px] h-[60px] flex-none "
+                          src={'/images/scene1.jpg'}
+                          fill
+                        />
+                        <div className="flex flex-col gap-1">
+                          <div className="font-[700] text-[16px] text-white">
+                            Sachin Sapkota
+                          </div>
+                          <div className="px-3 py-2 rounded-xl bg-backgroundColor font-[700] text-center">
+                            Chat now
+                          </div>
+                        </div>
+                      </div>
+
+                      <p>Or</p>
+                      <div className="flex flex-col">
+                        <p className="font-[700] text-[18px]">
+                          Call Helpline at:
+                        </p>
+                        <h1 className="font-[800] text-[20px]">
+                          1660 010 2005
+                        </h1>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex  justify-center">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };
