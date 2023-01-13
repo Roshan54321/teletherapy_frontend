@@ -5,16 +5,17 @@
 
 .container {
     width: 900px;
-    background-color: #FAFAFA;
+   
     margin: auto;
 }
 
 .messagearea {
     padding-top: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     height: 70vh;
     overflow-y: auto;
     scroll-snap-type: roximity;
+ 
 }
 
 .container__header {
@@ -31,20 +32,24 @@
 }
 
 .container__left {
-    max-width: 45%;
-    margin-left: 10px;
-    background-color: rgb(212, 211, 212);
-    border: 2px solid brown;
-    float: left;
-    clear: both;
+  max-width: 45%;
+  margin-right: 10px;
+  display: inline;
+ 
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  float: left;
+  margin-left: 10px;
+  clear: both;
 }
 
 .container__right {
-    max-width: 20%;
+    max-width: 45%;
     margin-right: 10px;
     display: inline;
-    border: 2px solid brown;
-    background-color: rgb(212, 111, 212);
+   
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
     float: right;
     clear: both;
 }
@@ -69,11 +74,11 @@
     width: 100%;
 }
 
-#send__container__message {
+/* #send__container__message {
     width: 93%;
     border-radius: 5px;
     height: 20px;
-}
+} */
 
 
 
