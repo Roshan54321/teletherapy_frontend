@@ -9,7 +9,7 @@ import useSWR, { mutate } from 'swr'
 import { getProfile } from '../../api/Profile';
 import axios from 'axios'
 import { useEffect } from 'react';
-import { AiOutlineMessage, AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus } from 'react-icons/ai';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -111,6 +111,19 @@ const Home = () => {
     async (url) => await getProfile(url), { revalidateOnFocus: false, revalidateOnReconnect: true }
   );
 
+  //getting assigned psychiatrists
+  const { data: psychiatristData, error: psychiatristError } = useSWR(
+    process.env.BACKEND + "/user/psychiatrist/assigned/list", async (url) => await axios.get(url, { withCredentials: true }), { revalidateOnFocus: false, revalidateOnReconnect: true }
+  );
+
+  //getting assigned patients
+  const { data: patientsData, error: patientsError } = useSWR(
+    process.env.BACKEND + "/user/psychiatrist/assigned/patients/list", async (url) => await axios.get(url, { withCredentials: true }), { revalidateOnFocus: false, revalidateOnReconnect: true }
+  );
+
+  console.log(patientsData)
+
+
   const { data: mood, error } = useSWR(process.env.BACKEND + "/user/get-emoji", async (url) => await axios.get(url, { withCredentials: true }))
 
   const submitFeeling = (emojiValue) => {
@@ -128,6 +141,8 @@ const Home = () => {
     }
   }, [mood])
 
+  const today = new Date()
+  const curHr = today.getHours()
 
   return (
     <div className="bg-backgroundColor rounded-3xl h-fit overflow-hidden ">
@@ -145,7 +160,7 @@ const Home = () => {
         </div> */}
 
         <h1 className="font-[800] text-[35px] text-black relative overflow-hidden pb-5">
-          <span className="">Good morning , {profileData?.data?.firstName + " " + profileData?.data?.lastName}</span>
+          <span className="">{curHr < 12 ? "Good morning " : curHr < 18 ? "Good afternoon " : "Good evening "} , {profileData?.data?.firstName + " " + profileData?.data?.lastName}</span>
         </h1>
       </div>
       <div className="rounded-t-3xl bg-[#f5f4f3] grid grid-cols-3 gap-3 -mt-8 overflow-hidden relative ">
@@ -184,74 +199,82 @@ const Home = () => {
           </div>
 
           {/* mood add */}
-          <div className="   flex flex-col col-span-2 mt-8 ">
-            <span className="font-[700] text-[18px] ">
-              How do you feel today?
-            </span>
-            <div className=" flex flex-wrap gap-4 rounded-3xl  bg-black p-4">
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 0 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(0)}>
-                <Image
-                  src="/images/sad.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
-              </div>
+          {profileData?.data?.type == "user" ?
+            <div className="flex flex-col col-span-2 mt-8 ">
+              <span className="font-[700] text-[18px] ">
+                How do you feel today?
+              </span>
+              <div className=" flex flex-wrap gap-4 rounded-3xl  bg-black p-4 w-fit">
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 0 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(0)}>
+                  <Image
+                    src="/images/sad.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
 
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 1 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(1)}>
-                <Image
-                  src="/images/crying.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
-              </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 2 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(2)}>
-                <Image
-                  src="/images/angry.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
-              </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 3 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(3)}>
-                <Image
-                  src="/images/anxious.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
-              </div>
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 4 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(4)}>
-                <Image
-                  src="/images/smiling.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
-              </div>
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 1 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(1)}>
+                  <Image
+                    src="/images/crying.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 2 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(2)}>
+                  <Image
+                    src="/images/angry.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 3 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(3)}>
+                  <Image
+                    src="/images/anxious.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 4 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(4)}>
+                  <Image
+                    src="/images/smiling.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
 
-              <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 5 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(5)}>
-                <Image
-                  src="/images/laughing.png "
-                  className="object-contain"
-                  width={40}
-                  height={40}
-                  alt=""
-                />
+                <div className={`bg-backgroundColor/50 cursor-pointer ring-2 ${moodData === 5 ? "ring-white scale-110" : "ring-white/60"} p-1 rounded-full w-10 h-10`} onClick={() => submitFeeling(5)}>
+                  <Image
+                    src="/images/laughing.png "
+                    className="object-contain"
+                    width={40}
+                    height={40}
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
+            :
+            <></>
+          }
 
-          {/* assign psycatris  */}
+          {/* assign psychiatrist  */}
           <div className="col-span-3 flex gap-3 flex-col mt-5  ">
             <div className="font-[700] text-[20px] inline-flex">
-              Assigned Psyciatrists
+              {profileData?.data?.type == "user" ?
+                "Assigned Psychiatrists"
+                :
+                "Assigned Patients"
+              }
             </div>
             {/* <div className="flex items-center gap-4">
               <span className="border-black border-[3px] rounded-full group cursor-pointer relative overflow-hidden ">
@@ -282,41 +305,55 @@ const Home = () => {
             </div> */}
 
             <div className="flex  items-center gap-5 ">
-              <div className="flex  w-2/6 p-5 items-center justify-center  rounded-2xl bg-black gap-4">
-                <img
-                  className="rounded-full object-cover w-[60px] h-[60px] flex-none "
-                  src={'/images/scene1.jpg'}
-                  fill
-                />
-                <div className="flex flex-col gap-1">
-                  <div className="font-[700] text-[16px] text-white">
-                    Sachin Sapkota
-                  </div>
-                  <div className="px-3 py-2 rounded-xl bg-backgroundColor font-[700] text-center">
-                    Message
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex  w-2/6 p-5 items-center justify-center  rounded-2xl bg-black gap-4">
-                <img
-                  className="rounded-full object-cover w-[60px] h-[60px] flex-none "
-                  src={'/images/scene1.jpg'}
-                  fill
-                />
-                <div className="flex flex-col gap-1">
-                  <div className="font-[700] text-[16px] text-white">
-                    Sachin Sapkota
-                  </div>
-                  <div className="px-3 py-2 rounded-xl bg-backgroundColor font-[700] text-center">
-                    Message
+              {profileData?.data?.type == "user" ? psychiatristData?.data?.data?.map((psychiatrist, i) =>
+                <div className="flex  w-2/6 p-5 items-center justify-center  rounded-2xl bg-black gap-4">
+                  <img
+                    className="rounded-full object-cover w-[60px] h-[60px] flex-none "
+                    src={psychiatrist?.profilePicture}
+                    fill
+                  />
+                  <div className="flex flex-col gap-1">
+                    <div className="font-[700] text-[16px] text-white">
+                      {psychiatrist?.firstName + " " + psychiatrist?.lastName}
+                    </div>
+                    <Link href={`/dashboard/chat/${profileData?.data?._id}/${psychiatrist?._id}?name=${profileData?.data?.firstName + " " + profileData?.data?.lastName}`} legacyBehavior>
+                      <a className="px-3 py-2 rounded-xl bg-backgroundColor font-[700] text-center">
+                        Message
+                      </a>
+                    </Link>
                   </div>
                 </div>
-              </div>
+              )
+                :
+                patientsData?.data?.data?.map((patient, i) =>
+                  <div className="flex  w-2/6 p-5 items-center justify-center  rounded-2xl bg-black gap-4">
+                    <img
+                      className="rounded-full object-cover w-[60px] h-[60px] flex-none "
+                      src={patient?.profilePicture}
+                      fill
+                    />
+                    <div className="flex flex-col gap-1">
+                      <div className="font-[700] text-[16px] text-white">
+                        {patient?.firstName + " " + patient?.lastName}
+                      </div>
+                      <Link href={`/dashboard/chat/${profileData?.data?._id}/${patient?._id}?name=${profileData?.data?.firstName + " " + profileData?.data?.lastName}`} legacyBehavior>
+                        <a className="px-3 py-2 rounded-xl bg-backgroundColor font-[700] text-center">
+                          Message
+                        </a>
+                      </Link>
+                    </div>
+                  </div>
+                )}
 
-              <span className="group  rounded-full w-[60px] h-[60px] group cursor-pointer relative overflow-hidden flex items-center justify-center bg-black">
-                <AiOutlinePlus className="w-12 h-12 group-hover:text-white/60 text-white" />
-              </span>
+              {profileData?.data?.type == "user" ?
+                <Link href="/dashboard/psychiatrists" legacyBehavior>
+                  <a className="group  rounded-full w-[60px] h-[60px] group cursor-pointer relative overflow-hidden flex items-center justify-center bg-black">
+                    <AiOutlinePlus className="w-12 h-12 group-hover:text-white/60 text-white" />
+                  </a>
+                </Link>
+                :
+                <></>
+              }
             </div>
           </div>
 

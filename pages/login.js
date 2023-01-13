@@ -82,7 +82,7 @@ function Login() {
             <Header page="login" />
             {logged ? (
                 <div
-                    className={`bg-back dark:bg-background w-full h-full flex items-center justify-center gap-20 pl-10 pr-10`}
+                    className={`bg-black w-full h-full flex items-center justify-center gap-20 pl-10 pr-10`}
                 >
                     <div className="flex flex-col gap-3 items-center">
                         <div className="dark:text-red-400 font-sans text-red-800">
@@ -118,7 +118,7 @@ function Login() {
                 </div>
             ) : (
                 <div
-                    className={`bg-back dark:bg-background w-full h-full flex items-center justify-center gap-20 px-10`}
+                    className={`bg-black w-full h-full flex items-center justify-center gap-20 px-10`}
                 >
                     <div className="animate-moveRight select-none hidden lg:flex w-[550px] h-[500px] relative">
                         <Image objectFit="contain" layout="fill" alt="sign up" src="/teaching1.svg"></Image>

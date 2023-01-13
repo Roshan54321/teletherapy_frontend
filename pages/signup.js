@@ -83,7 +83,7 @@ function Login() {
             </Head>
             <Header page="signup" />
             {logged ?
-                <div className={`dark:bg-background w-full h-full flex items-center justify-center gap-20 pl-10 pr-10 bg-back`}>
+                <div className={`bg-black w-full h-full flex items-center justify-center gap-20 pl-10 pr-10 bg-back`}>
                     <div className="flex flex-col gap-3 items-center">
                         <div className="dark:text-red-400 font-sans text-red-800">
                             Hey, you are already logged in as
@@ -114,7 +114,7 @@ function Login() {
 
                 :
 
-                <div className={`dark:bg-background bg-back w-full h-full flex items-center justify-center gap-24 px-10 pt-28`}>
+                <div className={`bg-black w-full h-full flex items-center justify-center gap-24 px-10 pt-28`}>
                     <div className="animate-moveDown select-none hidden lg:flex w-[550px] h-[500px] relative">
                         <Image objectFit="contain" layout="fill" alt="sign up" src="/exam.svg"></Image>
                     </div>

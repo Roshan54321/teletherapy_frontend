@@ -129,7 +129,7 @@ const DashLayout = ({ children, active }) => {
               TeleCBT
             </div>
           ) : (
-            <div className="flex-none  text-white font-[700] text-[2px]">
+            <div className="flex-none  text-white font-[700] text-[15px]">
               {/* <Image
                 className="object-contain cursor-pointer"
                 src={require('../../images/smalllogo.png')}
@@ -137,18 +137,18 @@ const DashLayout = ({ children, active }) => {
                 height={45}
                 alt={'logo'}
               /> */}
-              T-CBT
+              {/* T-CBT */}
             </div>
           )}
-          <div
+          {/* <div
             className={`${isshow
               ? 'hidden xl:flex xl:justify-center xl:items-center dark:text-white text-gray-800  rounded-full ring-2 ring-gray-800 dark:ring-white p-1 cursor-pointer'
               : 'hidden'
               }`}
             onClick={() => setlock(!lock)}
           >
-            <HiOutlineMenuAlt1 className="w-6 h-6 " />
-          </div>
+            <HiOutlineMenuAlt1 className="w-8 h-8 " />
+          </div> */}
         </div>
         <div className="pr-5 xl:pr-4 flex flex-col gap-2 mt-7 ">
           {dashboard.map((item) => {
@@ -156,11 +156,11 @@ const DashLayout = ({ children, active }) => {
               <Link key={item.id} href={item.links}>
                 <div
                   key={item.id}
-                  className={`py-2 px-3 flex gap-4 items-center cursor-pointer overflow-hidden  ${active === item.id ? 'bg-backgroundColor ' : ''
+                  className={`py-2 px-3 flex gap-4 items-center cursor-pointer overflow-hidden  ${active === item.id ? 'bg-backgroundColor text-black' : 'text-blue-50'
                     } rounded-r-3xl hover:bg-white group `}
                 >
                   <div className="">{item.icon}</div>
-                  <div className="overflow-hidden whitespace-nowrap text-[15px] font-extrabold tracking-wider  group-hover:text-black text-blue-300  ">
+                  <div className="overflow-hidden whitespace-nowrap text-[16px] font-bold tracking-wider  group-hover:text-black  ">
                     {item?.title}
                   </div>
                 </div>
@@ -198,7 +198,7 @@ const DashLayout = ({ children, active }) => {
           </div>
           <div className="flex items-center gap-6 px-2 ">
             <div className="text-white ">
-              <FaRegBell className="w-6 h-6" />
+              <FaRegBell className="w-8 h-8" />
             </div>
 
             <div
@@ -290,11 +290,11 @@ child container */}
           `}
             >
               <GiHamburgerMenu
-                className={` ${isshow ? 'hidden' : 'w-6 h-6 filter backdrop:blur-2xl'
+                className={` ${isshow ? 'hidden' : 'w-8 h-8 filter backdrop:blur-2xl'
                   }  `}
               />
               <GrClose
-                className={` ${isshow ? 'w-6 h-6 filter backdrop:blur-2xl ' : 'hidden'
+                className={` ${isshow ? 'w-8 h-8 filter backdrop:blur-2xl ' : 'hidden'
                   }  `}
               />
             </div>
@@ -312,43 +312,43 @@ const dashboard = [
     id: 'home',
     title: 'Home',
     links: '/dashboard/home',
-    icon: <MdOutlineSpaceDashboard className="w-6 h-6 text-gray-600" />,
+    icon: <MdOutlineSpaceDashboard className="w-8 h-8 text-gray-600" />,
   },
   {
     id: 'journal',
     title: 'Journal',
     links: '/dashboard/journal',
-    icon: <BsJournalCheck className="w-6 h-6 text-gray-600 " />,
+    icon: <BsJournalCheck className="w-8 h-8 text-gray-600 " />,
   },
 
   {
     id: 'pomodoro',
     title: 'Pomodoro',
     links: '/dashboard/pomodoro',
-    icon: <BiTimeFive className="w-6 h-6 text-gray-600 " />,
+    icon: <BiTimeFive className="w-8 h-8 text-gray-600 " />,
   },
   {
     id: 'breathing',
     title: 'Breathing',
     links: '/dashboard/breathing',
-    icon: <ImCheckboxUnchecked className="w-6 h-6 text-gray-600" />,
+    icon: <ImCheckboxUnchecked className="w-8 h-8 text-gray-600" />,
   },
   {
     id: 'routine',
     title: 'Routine',
     links: '/dashboard/routine',
-    icon: <MdEventAvailable className="w-6 h-6 text-gray-600" />,
+    icon: <MdEventAvailable className="w-8 h-8 text-gray-600" />,
   },
   {
     id: 'meditation',
     title: 'Meditation',
     links: '/dashboard/meditation',
-    icon: <GiMeditation className="w-6 h-6 text-gray-600" />,
+    icon: <GiMeditation className="w-8 h-8 text-gray-600" />,
   },
   {
     id: 'logout',
     title: 'logout',
     links: '/dashboard/logout',
-    icon: <AiOutlineLogout className="w-6 h-6 text-gray-600 " />,
+    icon: <AiOutlineLogout className="w-8 h-8 text-gray-600 " />,
   },
 ];

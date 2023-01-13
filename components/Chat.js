@@ -11,7 +11,6 @@ export default function Chat() {
 
     const [schedule, setSchedule] = useState(false)
     const [zoomData, setZoomData] = useState(null)
-    const [online, setOnline] = useState(false)
 
     var user = {
         email: 'roshanneupane54321@gmail.com',

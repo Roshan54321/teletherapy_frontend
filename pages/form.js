@@ -36,13 +36,13 @@ export default function FormSubmit() {
             options: ["Not at all", "Several days", "More than half the days", "Nearly everyday"]
         },
         {
-            question: "Thoughts that you would be better off dead or of hurting yourself in some way?",
+            question: "Thoughts that you would be better off dead or off hurting yourself in some way?",
             options: ["Not at all", "Several days", "More than half the days", "Nearly everyday"]
         }
     ]
 
     return (
-        <div className='flex justify-center items-center h-screen'>
+        <div className='flex justify-center items-center h-screen bg-black'>
             <Form form={form} />
         </div>
     )

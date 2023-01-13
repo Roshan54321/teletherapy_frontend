@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 export default function BreathingTimer() {
     return (
-        <div className='flex justify-center items-center min-h-screen'>
+        <div className='absolute inset-0 mt-[400px]'>
             <Head>
                 <title>Breathing | TeleCBT</title>
             </Head>
